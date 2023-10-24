@@ -25,9 +25,7 @@ class Cable(CommonModel):
     specification = models.CharField(
         max_length=100, null=True, blank=True, verbose_name="규격"
     )
-    # primary = models.ManyToManyField("equipments.Equipment", verbose_name="1차측")
-    # secondary = models.ManyToManyField("equipments.Equipment", verbose_name="2차측")
     description = models.CharField(max_length=100, null=True, blank=True)
 
-    # def __str__(self):
-    #     return f"{primary} - {secondary}"
+    def __str__(self):
+        return f"{self.pk}_{self.voltage_type}{self.voltage}"

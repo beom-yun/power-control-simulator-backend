@@ -38,6 +38,10 @@ CUSTOM_APPS = [
     "equipments.apps.EquipmentsConfig",
 ]
 
+THIRD_PARTY_APPS = [
+    "rest_framework",
+]
+
 SYSTEM_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -47,7 +51,7 @@ SYSTEM_APPS = [
     "django.contrib.staticfiles",
 ]
 
-INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS
+INSTALLED_APPS = CUSTOM_APPS + THIRD_PARTY_APPS + SYSTEM_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
