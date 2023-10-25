@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
+from .views import Equipments, EquipmentStatusChange
 
 urlpatterns = [
-    path("", views.Equipments.as_view()),
+    path("", Equipments.as_view()),
+    path("change/", EquipmentStatusChange.as_view()),
 ]

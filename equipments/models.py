@@ -56,25 +56,13 @@ class Equipment(CommonModel):
         verbose_name="상태",
         default=EquipmentStatusChoices.OPEN,
     )
-    cables = models.ManyToManyField("cables.Cable", blank=True)
+    cables = models.ManyToManyField(
+        "cables.Cable", blank=True, related_name="equipments"
+    )
     description = models.CharField(max_length=100, null=True, blank=True)
+    applied = models.ForeignKey(
+        "cables.Cable", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     def __str__(self):
         return f"{self.room} {self.name}"
-
-    def check_status(self, query):
-        print(f"check status : {self.name}, {self.status} -> {query.change}")
-        if self.category == EquipmentCategory.EquipmentTypeChoices.ACB:
-            pass
-        elif self.category == EquipmentCategory.EquipmentTypeChoices.GCB:
-            pass
-        elif self.category == EquipmentCategory.EquipmentTypeChoices.VCB:
-            pass
-        elif self.category == EquipmentCategory.EquipmentTypeChoices.HSCB:
-            pass
-        elif self.category == EquipmentCategory.EquipmentTypeChoices.DS:
-            pass
-        elif self.category == EquipmentCategory.EquipmentTypeChoices.TR:
-            pass
-        elif self.category == EquipmentCategory.EquipmentTypeChoices.SR:
-            pass

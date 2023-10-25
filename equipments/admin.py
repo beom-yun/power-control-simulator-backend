@@ -14,8 +14,10 @@ class EquipmentCategoryAdmin(admin.ModelAdmin):
 @admin.register(Equipment)
 class EquipmentAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "room",
         "name",
         "status",
         "serial_number",
+        "applied",
     )

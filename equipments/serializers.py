@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, CharField
 from .models import Equipment, EquipmentCategory
 from rooms.serializers import RoomSerializer
 from cables.serializers import CableSerializer
@@ -33,4 +33,15 @@ class EquipmentSerializer(ModelSerializer):
             "room",
             "category",
             "cables",
+        )
+
+
+class EquipmentStatusChangeSerializer(ModelSerializer):
+    change = CharField(max_length=10)
+
+    class Meta:
+        model = Equipment
+        fields = (
+            "id",
+            "change",
         )
