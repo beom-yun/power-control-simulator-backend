@@ -21,3 +21,14 @@ class EquipmentAdmin(admin.ModelAdmin):
         "serial_number",
         "applied",
     )
+
+    list_display_links = (
+        "id",
+        "room",
+        "name",
+    )
+
+    list_editable = (
+        "status",
+        "applied",
+    )

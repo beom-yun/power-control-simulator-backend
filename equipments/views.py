@@ -82,6 +82,69 @@ class EquipmentStatusChange(APIView):
                             return {"ok": True}
                         ###
 
+                        # CLOSE한 해당 기기에 연결된 케이블들 중, 가압이 안된 케이블에 가압 실시
+                        # 그 케이블에 연결된 기기들 중, CLOSE 상태였던 것들에 대해 반복 실시
+                        for cable in cables:
+                            if not cable.status:
+                                cable.status = True
+                                cable.save()
+                                cable_result.add(cable)
+                                for next_eq in cable.equipments.exclude(id=eq.id):
+                                    if next_eq.status == "close":
+                                        eq_q.append(next_eq)
+                                    elif (
+                                        next_eq.category.type
+                                        == EquipmentCategory.EquipmentTypeChoices.TR
+                                    ):
+                                        eq_q.append(next_eq)
+                            else:
+                                eq.applied = cable
+                                eq.save()
+                        ###
+
+                    elif change == "open":
+                        cables = eq.cables.all()
+
+                        # 양 측이 가압중이지 않으면 그냥 OPEN
+                        flag = False
+                        for cable in cables:
+                            flag = flag or cable.status
+                        if not flag:
+                            return {"ok": True}
+                        ###
+
+                        # OPEN한 해당 차단기의 연결된 케이블들 중, 2차측의 케이블 무가압 실시
+                        # 그 케이블에 연결된 기기들 중, CLOSE 상태였던 것들에 대해 반복 실시
+                        for cable in cables:
+                            if cable != eq.applied:
+                                cable.status = False
+                                cable.save()
+                                eq.applied = None
+                                eq.save()
+                                cable_result.add(cable)
+                                for next_eq in cable.equipments.exclude(id=eq.id):
+                                    if next_eq.status == "close":
+                                        eq_q.append(next_eq)
+                                    elif (
+                                        next_eq.category.type
+                                        == EquipmentCategory.EquipmentTypeChoices.TR
+                                    ):
+                                        eq_q.append(next_eq)
+
+                elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.VCB:
+                    pass
+
+                elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.HSCB:
+                    pass
+
+                elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.DS:
+                    pass
+
+                elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.TR:
+                    if change == "close":
+                        eq.status = "close"
+                        eq.save()
+                        cables = eq.cables.all()
                         for cable in cables:
                             if not cable.status:
                                 cable.status = True
@@ -95,16 +158,9 @@ class EquipmentStatusChange(APIView):
                                 eq.save()
 
                     elif change == "open":
+                        eq.status = "open"
+                        eq.save()
                         cables = eq.cables.all()
-
-                        # 양 측이 가압중이지 않으면 그냥 OPEN
-                        flag = False
-                        for cable in cables:
-                            flag = flag or cable.status
-                        if not flag:
-                            return {"ok": True}
-                        ###
-
                         for cable in cables:
                             if cable != eq.applied:
                                 cable.status = False
@@ -115,18 +171,6 @@ class EquipmentStatusChange(APIView):
                                 for next_eq in cable.equipments.exclude(id=eq.id):
                                     if next_eq.status == "close":
                                         eq_q.append(next_eq)
-
-                elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.VCB:
-                    pass
-
-                elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.HSCB:
-                    pass
-
-                elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.DS:
-                    pass
-
-                elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.TR:
-                    pass
 
                 elif eq.category.type == EquipmentCategory.EquipmentTypeChoices.SR:
                     pass
